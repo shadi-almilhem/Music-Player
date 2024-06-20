@@ -121,7 +121,9 @@ export default function MusicPlayer() {
 
   const handleNext = () => {
     setCurrentSongIndex((prevIndex) => (prevIndex + 1) % songs.length);
-    setIsPlaying(false);
+
+    setIsPlaying(true);
+
     resetRotation();
   };
 
@@ -129,7 +131,8 @@ export default function MusicPlayer() {
     setCurrentSongIndex(
       (prevIndex) => (prevIndex - 1 + songs.length) % songs.length,
     );
-    setIsPlaying(false);
+
+    setIsPlaying(true);
     resetRotation();
   };
 
@@ -203,7 +206,12 @@ export default function MusicPlayer() {
               {currentSong.artist}
             </h2>
           </div>
-          <audio ref={audioRef} src={currentSong.src} onEnded={handleNext} />
+          <audio
+            ref={audioRef}
+            src={currentSong.src}
+            onEnded={handleNext}
+            autoPlay
+          />
           <div className="flex w-full items-center justify-center">
             <input
               type="range"
