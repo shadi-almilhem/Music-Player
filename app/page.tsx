@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 const songs = [
   {
@@ -174,14 +175,16 @@ export default function MusicPlayer() {
   return (
     <main className="flex h-screen items-center justify-center bg-black/95">
       <div className="m-4 w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
-        <div className="flex h-[10vh] w-full items-center justify-center gap-4">
-          <Image
-            src="/SH-logo.png"
-            alt="Shadi Al Milhem Logo"
-            width={500}
-            height={500}
-            className="h-2/3 w-auto rounded-full"
-          />
+        <div className="flex h-[10vh] w-full items-center justify-center gap-4 py-2">
+          <Link className="flex h-full " href="https://shadialmilhem.com">
+            <Image
+              src="/SH-logo.png"
+              alt="Shadi Al Milhem Logo"
+              width={500}
+              height={500}
+              className="h-auto w-auto rounded-full"
+            />
+          </Link>
           <h3 className="text-2xl font-semibold text-gray-200">
             My Favorite Songs
           </h3>
@@ -201,11 +204,7 @@ export default function MusicPlayer() {
             </h2>
           </div>
           <audio ref={audioRef} src={currentSong.src} onEnded={handleNext} />
-          <div className="flex items-center justify-center">
-            <span className="text-gray-400">
-              {Math.floor(currentTime / 60)}:
-              {("0" + Math.floor(currentTime % 60)).slice(-2)}
-            </span>
+          <div className="flex w-full items-center justify-center">
             <input
               type="range"
               className="transparent mx-4 h-[4px] w-full cursor-pointer appearance-none border-transparent bg-neutral-200 accent-purple-600"
@@ -214,6 +213,14 @@ export default function MusicPlayer() {
               value={currentTime}
               onChange={handleSliderChange}
             />
+          </div>
+
+          <div className="flex w-full items-center justify-between px-4">
+            <span className="text-gray-400">
+              {Math.floor(currentTime / 60)}:
+              {("0" + Math.floor(currentTime % 60)).slice(-2)}
+            </span>
+
             <span className="text-gray-400">
               {Math.floor(duration / 60)}:
               {("0" + Math.floor(duration % 60)).slice(-2)}
