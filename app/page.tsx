@@ -1,112 +1,225 @@
+"use client";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+const songs = [
+  {
+    name: "2 days into collage",
+    src: "/assets/songs/2 days into college.mp3",
+    cover: "/assets/songs/TwoDaysIntoCollage.webp",
+    artist: "Aimee Carty",
+  },
+  {
+    name: "redrum",
+    src: "/assets/songs/21 Savage - redrum.mp3",
+    cover: "/assets/songs/redrum.webp",
+    artist: "21 Savage",
+  },
+  {
+    name: "Pocket Locket",
+    src: "/assets/songs/Alaina Castillo - Pocket Locket.mp3",
+    cover: "/assets/songs/pocketLocket.webp",
+    artist: "Alaina Castillo",
+  },
+  {
+    name: "Cool With You",
+    src: "/assets/songs/NewJeans Cool With You.mp3",
+    cover: "/assets/songs/CoolWithYou.webp",
+    artist: "NewJeans",
+  },
+  {
+    name: "How Sweet",
+    src: "/assets/songs/NewJeans How Sweet.mp3",
+    cover: "/assets/songs/HowSweet.webp",
+    artist: "NewJeans",
+  },
+  {
+    name: "One Of The Girls",
+    src: "/assets/songs/The Weeknd, JENNIE, Lily-Rose Depp - One Of The Girls.mp3",
+    cover: "/assets/songs/OneOfTheGirls.webp",
+    artist: "The Weeknd, JENNIE, Lily-Rose Depp",
+  },
+  {
+    name: "Save Your Tears",
+    src: "/assets/songs/The Weeknd - Save Your Tears.mp3",
+    cover: "/assets/songs/SaveYourTears.webp",
+    artist: "The Weeknd",
+  },
+];
+export default function MusicPlayer() {
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const discRef = useRef<HTMLDivElement | null>(null);
+  const lastTimestampRef = useRef<number | null>(null);
 
-export default function Home() {
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    if (audioElement) {
+      const setAudioData = () => {
+        setDuration(audioElement.duration);
+        setCurrentTime(audioElement.currentTime);
+      };
+
+      const setAudioTime = () => setCurrentTime(audioElement.currentTime);
+
+      audioElement.addEventListener("loadeddata", setAudioData);
+      audioElement.addEventListener("timeupdate", setAudioTime);
+
+      return () => {
+        audioElement.removeEventListener("loadeddata", setAudioData);
+        audioElement.removeEventListener("timeupdate", setAudioTime);
+      };
+    }
+  }, []);
+
+  const handlePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      } else {
+        audioRef.current.play();
+        lastTimestampRef.current = null; // Reset last timestamp
+        startSpinning();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleNext = () => {
+    setCurrentSongIndex((prevIndex) => (prevIndex + 1) % songs.length);
+    setIsPlaying(false);
+    resetRotation();
+  };
+
+  const handlePrev = () => {
+    setCurrentSongIndex(
+      (prevIndex) => (prevIndex - 1 + songs.length) % songs.length,
+    );
+    setIsPlaying(false);
+    resetRotation();
+  };
+
+  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = parseFloat(event.target.value);
+    }
+  };
+
+  const resetRotation = () => {
+    setRotationAngle(0);
+    if (discRef.current) {
+      discRef.current.style.transform = `rotate(0deg)`;
+    }
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+  };
+
+  const startSpinning = () => {
+    const spin = (timestamp: number) => {
+      if (!lastTimestampRef.current) lastTimestampRef.current = timestamp;
+      const elapsed = timestamp - lastTimestampRef.current;
+      lastTimestampRef.current = timestamp;
+
+      const increment = (360 / 60) * (elapsed / 1000); // Rotate at 60 RPM
+      setRotationAngle((prevAngle) => {
+        const newAngle = (prevAngle + increment) % 360;
+        if (discRef.current) {
+          discRef.current.style.transform = `rotate(${newAngle}deg)`;
+        }
+        return newAngle;
+      });
+
+      animationRef.current = requestAnimationFrame(spin);
+    };
+    animationRef.current = requestAnimationFrame(spin);
+  };
+
+  const currentSong = songs[currentSongIndex];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="flex h-screen items-center justify-center bg-black/95">
+      <div className="h-[80%] w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
+        <div className="flex h-[10vh] w-full items-center justify-center gap-4 ">
+          <Image
+            src="/SH-logo.png"
+            alt="Shadi Al Milhem Logo"
+            width={500}
+            height={500}
+            className="h-2/3 w-auto rounded-full"
+          />
+
+          <h3 className="text-2xl font-semibold text-gray-200">
+            My Favorite Songs
+          </h3>
         </div>
-      </div>
+        <div className="flex h-[70vh] flex-col items-center justify-center gap-4 ">
+          <div
+            className="vinyl-disc scale-75 md:scale-100"
+            style={{ backgroundImage: `url(${currentSong.cover})` }}
+            ref={discRef}
+          ></div>
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="text-2xl font-semibold text-gray-200">
+              {currentSong.name}
+            </h1>
+            <h2 className="text-lg font-medium text-gray-400">
+              {currentSong.artist}
+            </h2>
+          </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          <audio ref={audioRef} src={currentSong.src} onEnded={handleNext} />
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
+          <div className="flex items-center justify-center">
+            <span className="text-gray-400">
+              {Math.floor(currentTime / 60)}:
+              {("0" + Math.floor(currentTime % 60)).slice(-2)}
             </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
+            <input
+              type="range"
+              className="transparent mx-4 h-[4px] w-full cursor-pointer appearance-none border-transparent bg-neutral-200 accent-purple-600"
+              min="0"
+              max={duration || 0}
+              value={currentTime}
+              onChange={handleSliderChange}
+            />
+            <span className="text-gray-400">
+              {Math.floor(duration / 60)}:
+              {("0" + Math.floor(duration % 60)).slice(-2)}
             </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          </div>
+          <div className="flex gap-14 p-4">
+            <Button
+              className="h-[60px] w-[60px] rounded-full bg-transparent"
+              onClick={handlePrev}
+            >
+              <ChevronLeft />
+            </Button>
+            <Button
+              className="h-[65px] w-[65px] rounded-full bg-gradient-to-b from-gray-50 to-gray-300 "
+              onClick={handlePlayPause}
+            >
+              {isPlaying ? <Pause color="#222222" /> : <Play color="#222222" />}
+            </Button>
+            <Button
+              className="h-[60px] w-[60px] rounded-full bg-transparent"
+              onClick={handleNext}
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+        </div>
       </div>
     </main>
   );
