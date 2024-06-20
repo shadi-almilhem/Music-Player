@@ -175,7 +175,7 @@ export default function MusicPlayer() {
   return (
     <main className="flex h-screen items-center justify-center bg-black/95">
       <div className="m-4 w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
-        <div className="flex h-[10vh] w-full items-center justify-center gap-4 py-2">
+        <div className="mt-2 flex h-[10vh] w-full items-center justify-center gap-4 py-2">
           <Link className="flex h-full " href="https://shadialmilhem.com">
             <Image
               src="/SH-logo.png"
