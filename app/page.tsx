@@ -207,7 +207,7 @@ export default function MusicPlayer() {
           <div className="flex w-full items-center justify-center">
             <input
               type="range"
-              className="transparent mx-4 h-[4px] w-full cursor-pointer appearance-none border-transparent bg-neutral-200 accent-purple-600"
+              className="transparent mx-4 h-[4px]  w-full cursor-pointer  border-transparent bg-neutral-200 accent-purple-500"
               min="0"
               max={duration || 0}
               value={currentTime}
@@ -237,7 +237,11 @@ export default function MusicPlayer() {
               className="h-[65px] w-[65px] rounded-full bg-gradient-to-b from-gray-50 to-gray-300"
               onClick={handlePlayPause}
             >
-              {isPlaying ? <Pause color="#222222" /> : <Play color="#222222" />}
+              {isPlaying ? (
+                <Pause fill="#222222" strokeWidth={0} color="#222222" />
+              ) : (
+                <Play strokeWidth={2.5} color="#222222" />
+              )}
             </Button>
             <Button
               className="h-[60px] w-[60px] rounded-full bg-transparent"
