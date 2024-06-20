@@ -178,7 +178,7 @@ export default function MusicPlayer() {
   const currentSong = songs[currentSongIndex];
 
   return (
-    <main className="flex h-screen items-center justify-center bg-black/95">
+    <main className="flex h-[100vh] items-center justify-center bg-black/95">
       <div className="relative m-4 w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
         <Link
           target="_blank"
@@ -250,23 +250,33 @@ export default function MusicPlayer() {
               className="h-[60px] w-[60px] rounded-full bg-transparent"
               onClick={handlePrev}
             >
-              <ChevronLeft />
+              <ChevronLeft size={100} />
             </Button>
             <Button
               className="h-[65px] w-[65px] rounded-full bg-gradient-to-b from-gray-50 to-gray-300"
               onClick={handlePlayPause}
             >
               {isPlaying ? (
-                <Pause fill="#222222" strokeWidth={0} color="#222222" />
+                <Pause
+                  size={100}
+                  fill="#2a2a2a"
+                  strokeWidth={0}
+                  color="#2a2a2a"
+                />
               ) : (
-                <Play strokeWidth={2.5} color="#222222" />
+                <Play
+                  fill="#2a2a2a"
+                  size={100}
+                  strokeWidth={0}
+                  color="#2a2a2a"
+                />
               )}
             </Button>
             <Button
               className="h-[60px] w-[60px] rounded-full bg-transparent"
               onClick={handleNext}
             >
-              <ChevronRight />
+              <ChevronRight size={100} />
             </Button>
           </div>
         </div>
