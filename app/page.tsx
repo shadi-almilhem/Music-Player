@@ -49,6 +49,7 @@ const songs = [
 ];
 export default function MusicPlayer() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -57,6 +58,23 @@ export default function MusicPlayer() {
   const animationRef = useRef<number | null>(null);
   const discRef = useRef<HTMLDivElement | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const savedIndex = localStorage.getItem("currentSongIndex");
+    if (savedIndex !== null && !isNaN(Number(savedIndex))) {
+      const index = Number(savedIndex);
+      if (index >= 0 && index < songs.length) {
+        setCurrentSongIndex(index);
+      }
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem("currentSongIndex", currentSongIndex.toString());
+    }
+  }, [currentSongIndex, isInitialized]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -71,12 +89,17 @@ export default function MusicPlayer() {
       audioElement.addEventListener("loadeddata", setAudioData);
       audioElement.addEventListener("timeupdate", setAudioTime);
 
+      // Initialize the duration when the component mounts
+      if (audioElement.readyState >= 2) {
+        setDuration(audioElement.duration);
+      }
+
       return () => {
         audioElement.removeEventListener("loadeddata", setAudioData);
         audioElement.removeEventListener("timeupdate", setAudioTime);
       };
     }
-  }, []);
+  }, [currentSongIndex]);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
@@ -150,8 +173,8 @@ export default function MusicPlayer() {
 
   return (
     <main className="flex h-screen items-center justify-center bg-black/95">
-      <div className="h-[80%] w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
-        <div className="flex h-[10vh] w-full items-center justify-center gap-4 ">
+      <div className="m-4 w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
+        <div className="flex h-[10vh] w-full items-center justify-center gap-4">
           <Image
             src="/SH-logo.png"
             alt="Shadi Al Milhem Logo"
@@ -159,12 +182,11 @@ export default function MusicPlayer() {
             height={500}
             className="h-2/3 w-auto rounded-full"
           />
-
           <h3 className="text-2xl font-semibold text-gray-200">
             My Favorite Songs
           </h3>
         </div>
-        <div className="flex h-[70vh] flex-col items-center justify-center gap-4 ">
+        <div className="flex h-[70vh] flex-col items-center justify-center gap-4">
           <div
             className="vinyl-disc scale-75 md:scale-100"
             style={{ backgroundImage: `url(${currentSong.cover})` }}
@@ -178,9 +200,7 @@ export default function MusicPlayer() {
               {currentSong.artist}
             </h2>
           </div>
-
           <audio ref={audioRef} src={currentSong.src} onEnded={handleNext} />
-
           <div className="flex items-center justify-center">
             <span className="text-gray-400">
               {Math.floor(currentTime / 60)}:
@@ -207,7 +227,7 @@ export default function MusicPlayer() {
               <ChevronLeft />
             </Button>
             <Button
-              className="h-[65px] w-[65px] rounded-full bg-gradient-to-b from-gray-50 to-gray-300 "
+              className="h-[65px] w-[65px] rounded-full bg-gradient-to-b from-gray-50 to-gray-300"
               onClick={handlePlayPause}
             >
               {isPlaying ? <Pause color="#222222" /> : <Play color="#222222" />}
