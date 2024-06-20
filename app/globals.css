@@ -12,6 +12,13 @@
 
   transition: transform 0.1s linear;
 }
+/* HTML: <div class="triangle"></div> */
+.triangle {
+  width: 3rem;
+  aspect-ratio: 1;
+  clip-path: polygon(0 100%, 100% 0, 100% 100%);
+  background: linear-gradient(45deg, #b32afe, #c255fe);
+}
 
 .vinyl-disc::before {
   content: "";

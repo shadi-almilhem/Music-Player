@@ -177,9 +177,18 @@ export default function MusicPlayer() {
 
   return (
     <main className="flex h-screen items-center justify-center bg-black/95">
-      <div className="m-4 w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
+      <div className="relative m-4 w-[400px] overflow-hidden rounded-xl border-2 bg-gradient-to-b from-gray-800 to-gray-900">
+        <Link
+          target="_blank"
+          href="https://shadialmilhem.com"
+          className="triangle absolute bottom-0 right-0  bg-red-500"
+        ></Link>
         <div className="mt-2 flex h-[10vh] w-full items-center justify-center gap-4 py-2">
-          <Link className="flex h-full " href="https://shadialmilhem.com">
+          <Link
+            className="flex h-full "
+            target="_blank"
+            href="https://shadialmilhem.com"
+          >
             <Image
               src="/SH-logo.png"
               alt="Shadi Al Milhem Logo"
@@ -192,7 +201,7 @@ export default function MusicPlayer() {
             My Favorite Songs
           </h3>
         </div>
-        <div className="flex h-[70vh] flex-col items-center justify-center gap-4">
+        <div className="flex h-[70vh] flex-col items-center justify-between gap-4">
           <div
             className="vinyl-disc scale-75 md:scale-100"
             style={{ backgroundImage: `url(${currentSong.cover})` }}
@@ -212,7 +221,7 @@ export default function MusicPlayer() {
             onEnded={handleNext}
             autoPlay
           />
-          <div className="flex w-full items-center justify-center">
+          <div className="flex w-full flex-col items-center justify-center px-4">
             <input
               type="range"
               className="transparent mx-4 h-[4px]  w-full cursor-pointer  border-transparent bg-neutral-200 accent-purple-500"
@@ -221,20 +230,20 @@ export default function MusicPlayer() {
               value={currentTime}
               onChange={handleSliderChange}
             />
+            <div className="mt-2 flex w-full items-center justify-between">
+              <span className="text-gray-400">
+                {Math.floor(currentTime / 60)}:
+                {("0" + Math.floor(currentTime % 60)).slice(-2)}
+              </span>
+
+              <span className="text-gray-400">
+                {Math.floor(duration / 60)}:
+                {("0" + Math.floor(duration % 60)).slice(-2)}
+              </span>
+            </div>
           </div>
 
-          <div className="flex w-full items-center justify-between px-4">
-            <span className="text-gray-400">
-              {Math.floor(currentTime / 60)}:
-              {("0" + Math.floor(currentTime % 60)).slice(-2)}
-            </span>
-
-            <span className="text-gray-400">
-              {Math.floor(duration / 60)}:
-              {("0" + Math.floor(duration % 60)).slice(-2)}
-            </span>
-          </div>
-          <div className="flex gap-14 p-4">
+          <div className="mb-8 flex gap-14">
             <Button
               className="h-[60px] w-[60px] rounded-full bg-transparent"
               onClick={handlePrev}
