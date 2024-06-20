@@ -125,6 +125,7 @@ export default function MusicPlayer() {
     setIsPlaying(true);
 
     resetRotation();
+    startSpinning();
   };
 
   const handlePrev = () => {
@@ -134,6 +135,7 @@ export default function MusicPlayer() {
 
     setIsPlaying(true);
     resetRotation();
+    startSpinning();
   };
 
   const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
